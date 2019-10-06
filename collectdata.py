@@ -1,4 +1,3 @@
-from matplotlib import pyplot as plt
 from screen import screenshot, show_image
 from getkeys import key_check
 from keys import keys_to_output

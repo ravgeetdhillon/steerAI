@@ -622,4 +622,5 @@ def keys_to_output(keys):
         output = d
     else:
         output = nk
+
     return output

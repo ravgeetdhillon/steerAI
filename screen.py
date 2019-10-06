@@ -50,8 +50,7 @@ def show_image(image=None, grab=False):
     '''
 
     if grab:
-        screen = grab_screen(
-            region=(10, 40, SCREEN_GRAB_WIDTH, SCREEN_GRAB_HEIGHT))
+        screen = screenshot(region=(10, 40, SCREEN_GRAB_WIDTH, SCREEN_GRAB_HEIGHT))
         scaled_width = int(SCREEN_GRAB_WIDTH * RESIZE_FACTOR)
         scaled_height = int(SCREEN_GRAB_HEIGHT * RESIZE_FACTOR)
         screen = cv2.resize(screen, (scaled_width, scaled_height))
