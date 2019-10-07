@@ -8,7 +8,7 @@ import os
 
 SCREEN_GRAB_WIDTH = 800
 SCREEN_GRAB_HEIGHT = 600
-RESIZE_FACTOR = 0.75
+RESIZE_FACTOR = 0.5
 SAVE_POINT = 500
 
 
@@ -17,20 +17,30 @@ def setup():
     Setup the project space for storing the data.
     '''
 
-    if not os.path.exists('dataset'):
-        os.mkdir('dataset')
+    if not os.path.exists('data'):
+        os.mkdir('data')
+    if not os.path.exists('data/dataset'):
+        os.mkdir('data/dataset')
 
     starting_value = 1
-
     while True:
-        file_name = f'dataset/training_data-{starting_value}.npy'
+        if not os.path.exists(f'data/dataset/part{starting_value}'):
+            os.mkdir(f'data/dataset/part{starting_value}')
+            part = f'part{starting_value}'
+            break
+        else:
+            starting_value += 1
+
+    starting_value = 1
+    while True:
+        file_name = f'data/dataset/{part}/training_data-{starting_value}.npy'
         if not os.path.isfile(file_name):
             print(f'STARTING WITH VALUE : {starting_value}')
             break
         else:
             starting_value += 1
     
-    return (file_name, starting_value)
+    return (file_name, part, starting_value)
         
 
 def main():
@@ -43,7 +53,7 @@ def main():
 
     # load the important variables
     paused = False
-    file_name, starting_value = setup()
+    file_name, part, starting_value = setup()
     training_data = []
 
     count = 0
@@ -84,7 +94,7 @@ def main():
                 print('SAVED')
                 training_data = []
                 starting_value += 1
-                file_name = f'dataset/training_data-{starting_value}.npy'
+                file_name = f'data/dataset/{part}/training_data-{starting_value}.npy'
 
         # press `T` to stop the data collection process
         keys = key_check()
