@@ -1,14 +1,10 @@
+from variables import SCREEN_GRAB_START_WIDTH, SCREEN_GRAB_START_HEIGHT, SCREEN_GRAB_WIDTH, SCREEN_GRAB_HEIGHT, RESIZE_FACTOR, SAVE_POINT
 from screen import screenshot, show_image
 from keys import keys_to_output, key_check
 import numpy as np
 import cv2
 import time
 import os
-
-SCREEN_GRAB_WIDTH = 800
-SCREEN_GRAB_HEIGHT = 600
-RESIZE_FACTOR = 0.5
-SAVE_POINT = 500
 
 
 def setup():
@@ -18,13 +14,13 @@ def setup():
 
     if not os.path.exists('data'):
         os.mkdir('data')
-    if not os.path.exists('data/dataset'):
-        os.mkdir('data/dataset')
+    if not os.path.exists('data/raw_dataset'):
+        os.mkdir('data/raw_dataset')
 
     starting_value = 1
     while True:
-        if not os.path.exists(f'data/dataset/part{starting_value}'):
-            os.mkdir(f'data/dataset/part{starting_value}')
+        if not os.path.exists(f'data/raw_dataset/part{starting_value}'):
+            os.mkdir(f'data/raw_dataset/part{starting_value}')
             part = f'part{starting_value}'
             break
         else:
@@ -32,7 +28,7 @@ def setup():
 
     starting_value = 1
     while True:
-        file_name = f'data/dataset/{part}/training_data-{starting_value}.npy'
+        file_name = f'data/raw_dataset/{part}/training_data-{starting_value}.npy'
         if not os.path.isfile(file_name):
             print(f'STARTING WITH VALUE : {starting_value}')
             break
@@ -69,15 +65,11 @@ def main():
                 count = 0
                 last_time = now
 
-            # grabs the screen, resizes it and then converts in to Grayscale mode
+            # grabs the screen in the given region
             screen = screenshot(
-                region=(10, 40, SCREEN_GRAB_WIDTH, SCREEN_GRAB_HEIGHT))
-            scaled_width = int(SCREEN_GRAB_WIDTH * RESIZE_FACTOR)
-            scaled_height = int(SCREEN_GRAB_HEIGHT * RESIZE_FACTOR)
-            screen = cv2.resize(screen, (scaled_width, scaled_height))
-            screen = cv2.cvtColor(screen, cv2.COLOR_BGR2GRAY)
+                region=(SCREEN_GRAB_START_WIDTH, SCREEN_GRAB_START_HEIGHT, SCREEN_GRAB_WIDTH, SCREEN_GRAB_HEIGHT))
 
-            # # records the key presses for each image
+            # records the key presses for each image
             keys = key_check()
             output = keys_to_output(keys)
 
@@ -94,7 +86,7 @@ def main():
                 print(f'-----SAVED {starting_value}-----')
                 training_data = []
                 starting_value += 1
-                file_name = f'data/dataset/{part}/training_data-{starting_value}.npy'
+                file_name = f'data/raw_dataset/{part}/training_data-{starting_value}.npy'
 
         # press `T` to stop the data collection process
         keys = key_check()
