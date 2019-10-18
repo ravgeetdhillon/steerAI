@@ -107,7 +107,7 @@ def to_gray(img):
 def convert_image(image):
     '''
     Converts the image to the desired format by passing it through a transformation pipeline.
-x    '''
+    '''
 
     original = np.copy(image)
 
