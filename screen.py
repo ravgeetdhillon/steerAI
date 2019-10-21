@@ -104,6 +104,13 @@ def to_gray(img):
     return cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 
 
+def roi(image, vertices):
+    mask = np.zeros_like(image)
+    cv2.fillPoly(mask, vertices, 255)
+    masked = cv2.bitwise_and(image, mask)
+    return masked
+
+
 def convert_image(image):
     '''
     Converts the image to the desired format by passing it through a transformation pipeline.
@@ -131,13 +138,25 @@ def convert_image(image):
     image3 = cv2.bitwise_and(image1, image1, mask=mask)
 
     final = cv2.bitwise_and(image2, image3)
-    final = gaussian_blur(final, kernel_size=5)
+    # final = gaussian_blur(final, kernel_size=5)
 
     # resize the image for better computational performance
     height, width = final.shape
     scaled_width = int(width * RESIZE_FACTOR)
     scaled_height = int(height * RESIZE_FACTOR)
     final = cv2.resize(final, (scaled_width, scaled_height))
-    final = final[(scaled_height//3):-(scaled_height//10), ]
+    # final = final[(scaled_height//3):-int(scaled_height/2.25), (scaled_width//3):-int(scaled_width//3)]
 
+    final[final <= 128] = 0
+    final[final > 128] = 255
+
+    height, width = final.shape
+
+    # vertices = np.array( [[0,67],[134,67],[90,0],[44,0]] )
+    vertices = np.array( [[width//4, height-int(height/2.5)],[width-width//4, height-int(height/2.5)],[int(0.6*width), height//3],[int(0.4*width), height//3]] )
+    final = roi(final, [vertices])
+
+    final = final[(height//3):height-int(height/2.5), (width//4):width-width//4]
+
+    print(final.shape)
     return np.array(final)

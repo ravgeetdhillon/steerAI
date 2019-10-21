@@ -2,6 +2,8 @@ import win32api as wapi
 import numpy as np
 import ctypes
 import time
+import random
+
 
 SendInput = ctypes.windll.user32.SendInput
 
@@ -18,15 +20,10 @@ NP_8 = 0x48
 # C struct redefinitions
 PUL = ctypes.POINTER(ctypes.c_ulong)
 
-w = [1, 0, 0, 0, 0, 0, 0, 0, 0]
-s = [0, 1, 0, 0, 0, 0, 0, 0, 0]
-a = [0, 0, 1, 0, 0, 0, 0, 0, 0]
-d = [0, 0, 0, 1, 0, 0, 0, 0, 0]
-wa = [0, 0, 0, 0, 1, 0, 0, 0, 0]
-wd = [0, 0, 0, 0, 0, 1, 0, 0, 0]
-sa = [0, 0, 0, 0, 0, 0, 1, 0, 0]
-sd = [0, 0, 0, 0, 0, 0, 0, 1, 0]
-nk = [0, 0, 0, 0, 0, 0, 0, 0, 1]
+w = [1, 0, 0, 0]
+a = [0, 1, 0, 0]
+d = [0, 0, 1, 0]
+nk = [0, 0, 0, 1]
 
 key_list = list('ABCDEFGHIJKLMNOPQRSTUVWXYZ 123456789')
 
@@ -69,27 +66,17 @@ def keys_to_output(keys):
     '''
     Convert the pressed keys to the a boolean value array.
     '''
-    
-    output = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-    if 'W' in keys and 'A' in keys:
-        output = wa
-    elif 'W' in keys and 'D' in keys:
-        output = wd
-    elif 'S' in keys and 'A' in keys:
-        output = sa
-    elif 'S' in keys and 'D' in keys:
-        output = sd
-    elif 'W' in keys:
-        output = w
-    elif 'S' in keys:
-        output = s
-    elif 'A' in keys:
+
+    output = [0, 0, 0, 0]
+    if 'A' in keys:
         output = a
     elif 'D' in keys:
         output = d
+    elif 'W' in keys:
+        output = w
     else:
         output = nk
-
+    
     return output
 
 
@@ -98,7 +85,7 @@ def key_check():
     Checks the for which keys are pressed.
     '''
 
-    keys = [ key for key in key_list if wapi.GetAsyncKeyState( ord(key) ) ]
+    keys = [key for key in key_list if wapi.GetAsyncKeyState(ord(key))]
     return keys
 
 
@@ -119,8 +106,52 @@ def ReleaseKey(hexKeyCode):
     ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
 
 
-if __name__ == '__main__':
-    PressKey(0x11)
-    time.sleep(1)
-    ReleaseKey(0x11)
-    time.sleep(1)
+def straight():
+    ReleaseKey(A)
+    ReleaseKey(D)
+    ReleaseKey(S)
+    ReleaseKey(W)
+    PressKey(W)
+
+
+def left():
+    # if random.randrange(0, 3) == 1:
+    #     PressKey(W)
+    # else:
+    #     ReleaseKey(W)
+    # ReleaseKey(A)
+    ReleaseKey(D)
+    ReleaseKey(S)
+    ReleaseKey(W)
+    PressKey(A)
+
+
+def right():
+    # if random.randrange(0, 3) == 1:
+    #     PressKey(W)
+    # else:
+    #     ReleaseKey(W)
+    ReleaseKey(A)
+    ReleaseKey(D)
+    ReleaseKey(S)
+    ReleaseKey(W)
+    PressKey(D)
+
+
+def nokey():
+    # if random.randrange(0, 3) == 1:
+    #     PressKey(W)
+    # else:
+    #     ReleaseKey(W)
+    ReleaseKey(W)
+    ReleaseKey(A)
+    ReleaseKey(S)
+    ReleaseKey(D)
+    # PressKey(W)
+    
+
+# if __name__ == '__main__':
+#     PressKey(0x11)
+#     time.sleep(1)
+#     ReleaseKey(0x11)
+#     time.sleep(1)

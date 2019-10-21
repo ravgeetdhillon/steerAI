@@ -1,6 +1,6 @@
 from variables import SCREEN_GRAB_START_WIDTH, SCREEN_GRAB_START_HEIGHT, SCREEN_GRAB_WIDTH, SCREEN_GRAB_HEIGHT, RESIZE_FACTOR, SAVE_POINT
 from screen import screenshot, show_image
-from keys import keys_to_output, key_check
+from keys import keys_to_output, key_check, w, a, d, nk
 import numpy as np
 import cv2
 import time
@@ -38,10 +38,21 @@ def setup():
     return (file_name, part, starting_value)
 
 
+def are_equal(data):
+    '''
+    Checks whether all the elements in the data are equal.
+    '''
+
+    if all(i[1] == data[0][1] for i in data):
+        return True
+    else:
+        return False
+
+
 def main():
 
     # gives a countdown before starting the process
-    for i in list(range(2))[::-1]:
+    for i in list(range(5))[::-1]:
         print(i + 1)
         time.sleep(1)
     print('START')
@@ -49,10 +60,15 @@ def main():
     # load the important variables
     paused = False
     file_name, part, starting_value = setup()
-    training_data = []
+    lefts, rights, straights, nokeys, training_data = [], [], [], [], []
 
     count = 0
     last_time = time.time()
+
+    # a buffer to store the screenshots and key presses
+    # used to remove the accidentally pressed keys
+    # helps in keeping the data accurate and clean
+    buffer = []
 
     while True:
         if not paused:
@@ -73,18 +89,44 @@ def main():
             keys = key_check()
             output = keys_to_output(keys)
 
-            # stores the pixel data of the image and the corresponding key presses in the training data array
-            training_data.append([screen, output])
+            print(f'nk:{len(nokeys)},lefts:{len(lefts)},rights:{len(rights)},straights:{len(straights)}')
+            
+            # add the data to buffer if the current action is same as the actions in the buffer
+            if len(buffer) == 0 or buffer[-1][1] == output:
+                buffer.append( [screen, output] )
+                continue
+            
+            # flush the buffer if keypresses dont last longer
+            # keys have been pressed to orient the vehicle a little bit but weren't necessary
+            elif len(buffer) < 2 and buffer[-1][1] != output:
+                buffer = []
+                continue
+            
+            elif len(buffer) >= 2 and buffer[-1][1] != output:
+                if buffer[-1][1] == a:
+                    while len(lefts) < SAVE_POINT // 4 and len(buffer) > 0:
+                        lefts.append( buffer.pop() )
+                
+                elif buffer[-1][1] == d:
+                    while len(rights) < SAVE_POINT // 4 and len(buffer) > 0:
+                        rights.append( buffer.pop() )
+                
+                elif buffer[-1][1] == w:
+                    while len(straights) < SAVE_POINT // 4 and len(buffer) > 0:
+                        straights.append( buffer.pop() )
+                
+                elif buffer[-1][1] == nk:
+                    while len(nokeys) < SAVE_POINT // 4 and len(buffer) > 0:
+                        nokeys.append( buffer.pop() )
+                
+            buffer = [ [screen, output] ]
 
-            # regular checkpoints to keep the track of data collection process
-            if len(training_data) % 100 == 0:
-                print('--MILESTONE REACHED')
-
-            # store the data into the npy file after the dataset size reaches 500 images
-            if len(training_data) == SAVE_POINT:
+            # store the data into the npy file after the dataset size reaches images specified in `SAVE_POINT`
+            if sum([len(lefts), len(rights), len(straights), len(nokeys)]) == SAVE_POINT:
+                training_data = lefts + rights + straights + nokeys
                 np.save(file_name, training_data)
                 print(f'-----SAVED {starting_value}-----')
-                training_data = []
+                lefts, rights, straights, nokeys, training_data = [], [], [], [], []
                 starting_value += 1
                 file_name = f'data/raw_dataset/{part}/training_data-{starting_value}.npy'
 

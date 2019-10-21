@@ -1,0 +1,31 @@
+df = pd.DataFrame(master)
+print(Counter(df[1].apply(str)))
+
+------
+
+For example, you could read your cube directly from a file into an array:
+
+x = numpy.fromfile(file=open("data"), dtype=float).reshape((100, 100, 100))
+Sum along the second dimension:
+
+s = x.sum(axis=1)
+Find which cells are above a threshold:
+
+(x > 0.5).nonzero()
+Remove every even-indexed slice along the third dimension:
+
+x[:, :, ::2]
+
+
+# model = {
+#         '0, 0' : {
+#             0:12,
+#             1:323,
+#             2:44,
+#         },
+#         '0, 1' : {
+#             0:56,
+#             241:223,
+#             25:223,
+#         }
+# }
