@@ -119,6 +119,30 @@ def ReleaseKey(hexKeyCode):
     ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
 
 
+def straight():
+    ReleaseKey(W)
+    ReleaseKey(A)
+    ReleaseKey(S)
+    ReleaseKey(D)
+    PressKey(W)
+
+
+def left():
+    ReleaseKey(W)
+    ReleaseKey(A)
+    ReleaseKey(S)
+    ReleaseKey(D)
+    PressKey(A)
+
+
+def right():
+    ReleaseKey(W)
+    ReleaseKey(A)
+    ReleaseKey(S)
+    ReleaseKey(D)
+    PressKey(D)
+
+
 if __name__ == '__main__':
     PressKey(0x11)
     time.sleep(1)
