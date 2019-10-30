@@ -4,3 +4,7 @@ dataset
 .vscode
 steerAI.wiki
 *.cmd
+img
+data
+models
+*.h5
