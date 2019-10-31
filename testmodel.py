@@ -19,6 +19,7 @@ def get_action(image):
     
     print('1')
     image = cv2.resize(image, None, fx=0.5, fy=0.5)
+    image = image / 255
     print('2')
     image = tf.cast(image, tf.float32)
     print('3')
@@ -87,7 +88,10 @@ def main():
 
 # main()
 
-image = cv2.imread('img/image292-straight.png')
-# show_image(image)
-a = get_action(image)
-print(a)
+images = ['image248-straight.png', 'image19-left.png']
+for name in images:
+    image = cv2.imread(f'img/{name}')
+    f = time.time()
+    a = get_action(image)
+    print(a)
+    print(time.time() - f)
