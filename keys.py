@@ -18,15 +18,9 @@ NP_8 = 0x48
 # C struct redefinitions
 PUL = ctypes.POINTER(ctypes.c_ulong)
 
-w = [1, 0, 0, 0, 0, 0, 0, 0, 0]
-s = [0, 1, 0, 0, 0, 0, 0, 0, 0]
-a = [0, 0, 1, 0, 0, 0, 0, 0, 0]
-d = [0, 0, 0, 1, 0, 0, 0, 0, 0]
-wa = [0, 0, 0, 0, 1, 0, 0, 0, 0]
-wd = [0, 0, 0, 0, 0, 1, 0, 0, 0]
-sa = [0, 0, 0, 0, 0, 0, 1, 0, 0]
-sd = [0, 0, 0, 0, 0, 0, 0, 1, 0]
-nk = [0, 0, 0, 0, 0, 0, 0, 0, 1]
+w = [1, 0, 0, 0]
+a = [0, 1, 0, 0]
+d = [0, 0, 1, 0]
 
 key_list = list('ABCDEFGHIJKLMNOPQRSTUVWXYZ 123456789')
 
@@ -117,6 +111,30 @@ def ReleaseKey(hexKeyCode):
                         0, ctypes.pointer(extra))
     x = Input(ctypes.c_ulong(1), ii_)
     ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
+
+
+def straight():
+    ReleaseKey(W)
+    ReleaseKey(A)
+    ReleaseKey(S)
+    ReleaseKey(D)
+    PressKey(W)
+
+
+def left():
+    ReleaseKey(W)
+    ReleaseKey(A)
+    ReleaseKey(S)
+    ReleaseKey(D)
+    PressKey(A)
+
+
+def right():
+    ReleaseKey(W)
+    ReleaseKey(A)
+    ReleaseKey(S)
+    ReleaseKey(D)
+    PressKey(D)
 
 
 if __name__ == '__main__':

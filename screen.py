@@ -5,6 +5,7 @@ import win32gui
 import win32ui
 import win32con
 import win32api
+import os
 
 
 def screenshot(region=None):
@@ -141,3 +142,21 @@ def convert_image(image):
     final = final[(scaled_height//3):-(scaled_height//10), ]
 
     return np.array(final)
+
+
+def get_data():
+    files = os.listdir('img/')
+    data = []
+    for f in files:
+        image = cv2.imread(f'img/{f}')
+        # image = cv2.resize(image, (32, 32))
+        label = f.split('-')[1].split('.')[0]
+        if label == 'straight':
+            label = 0
+        elif label == 'left':
+            label = 1
+        elif label == 'right':
+            label = 2
+        data.append( [image, label] )
+
+    return np.array(data)
